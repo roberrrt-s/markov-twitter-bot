@@ -10,7 +10,7 @@ function randomNumber(min, max) {
 }
 
 function filterTweets(tweet) {
-	return tweet['Tweet Type'] === String(this);
+	return (!!tweet.in_reply_to_status_id_str) == parseInt(this);
 }
 
 function formatTextFromTweet(tweet) {
@@ -19,7 +19,7 @@ function formatTextFromTweet(tweet) {
 }
 
 function convertTweetObjToMarkovReady(tweet) {
-	tweet = tweet['Text'];
+	tweet = tweet['Text'] || tweet['full_text'];
 	tweet = tweet
 		.replace(/(@)[\n\S]+/g, '')
 		.replace(/(?:https?):\/\/[\n\S]+/g, '')

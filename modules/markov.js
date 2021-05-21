@@ -8,7 +8,6 @@ function exposeDatasetToMarkov(data) {
 	if(data) {
 		dataset = data;
 		console.log('Succesfully exposed dataset to Markov:');
-		console.table(Object.keys(dataset));
 		console.log(`Total tweets: ${dataset.tweets.length}`);
 		console.log(`Total replies: ${dataset.replies.length}`);
 	}

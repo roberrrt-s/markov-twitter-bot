@@ -8,10 +8,9 @@ const cron = require('./modules/cron.js');
 const twitter = require('./modules/twitter.js');
 
 getData.then(data => {
-	console.log('Data is imported, connecting stream to twitter');
-	console.log(data);
-	// stream.connectToTwitter();
-	// markov.exposeDatasetToMarkov(data);
-	// cron.startJobs();
-	// twitter.sendNewTweet();
+	console.log('Data is imported, connecting stream to twitter (well, normally)');
+	stream.connectToTwitter();
+	markov.exposeDatasetToMarkov(data);
+	cron.startJobs();
+	twitter.sendNewTweet();
 });

@@ -15,71 +15,81 @@ const Client = new Twit({
 	strictSSL:            true,     // optional - requires SSL certificates to be valid.
 });
 
+function getUserHistory(user, res, rej) {
+	console.log(`Starting scrape of ${user}`);
+
+	requestMaxStatuses(tweets => {
+		if(tweets) {
+			res(tweets);
+		} else {
+			rej('Something went wrong');
+		}
+	});
+
+	function requestMaxStatuses(onComplete, lastId, allTweetData) {
+		console.log('Requesting max (200) amount of tweets from Twitter');
+
+		var args = {
+			screen_name: user,
+			count: 200,
+			tweet_mode: 'extended',
+			include_rts: false
+		};
+
+		if(lastId) args.max_id = lastId;
+
+		Client.get('statuses/user_timeline', args, (err, data) => {
+			if(!err) {
+
+				// Assume we have data...
+				if(data.length > 1) {
+					console.log(`found new tweets by ${user}!`);
+					console.log(`new number of tweets: ${data.length}`);
+
+					const latestTweetId = parseInt(data[data.length - 1].id_str);
+
+					let allTweets = allTweetData || [];
+
+					allTweets.push(...data);
+
+					console.log(`total number of tweets for ${user}: ${allTweets.length}`);
+
+					console.log(`latest tweet id: ${latestTweetId}`);
+
+					requestMaxStatuses(onComplete, latestTweetId, allTweets);
+
+				} else {
+					console.log('Unable to scrape new tweets.');
+					console.log(`Scraped all available tweets by ${user} (${allTweetData.length})`);
+					onComplete(allTweetData);
+				}
+			} else {
+				onComplete(err);
+			}
+		});
+	}
+}
+
 function scrapeUserTweets(users) {
 	return new Promise((resolve, reject) => {
 
 		const allTweets = [];
 
-		for (const user of users) {
-			let tweets = getUserHistory(user);
-
-			console.log(tweets);
-
-			allTweets.push(tweets);
+		for(let i = 0; i < users.length; i++) {
+			allTweets.push(new Promise((resolve, reject) => {
+				getUserHistory(users[i], resolve, reject);
+			}));
 		}
 
 		Promise.all(allTweets)
 			.then(data => {
 				resolve(data);
-			})
-			.catch(err => {
+			}).catch(err => {
 				reject(err);
 			});
 
-		function getUserHistory(user) {
-			return new Promise((resolve, reject) => {
-
-
-
-				// Client.get('statuses/user_timeline', {
-				// 	screen_name: user,
-				// 	count: 200,
-				// 	tweet_mode: 'extended'
-				// }, (err, data) => {
-				// 	if(!err) {
-				// 		resolve(data);
-				// 	} else {
-				// 		reject(err);
-				// 	}
-				// });
-			});
-		}
-
 	});
 }
-
-// return new Promise((resolve, reject) => {
-// 	let allTweets = [];
-
-// 	function scrapeAllUserTweets(user) {
-// 		return [user];
-// 	}
-
-// 	async function getAllUserTweets() {
-// 		users.forEach(user => {
-// 			const tweets = await scrapeAllUserTweets(user);
-// 			allTweets.push(tweets);
-// 		})
-
-// 		if(allTweets.length > 0) {
-// 			resolve(allTweets);
-// 		} else {
-// 			reject(allTweets);
-// 		}
-// 	}
-
-// 	getAllUserTweets();
-// });
 
 function getUserReplyData(username) {
 	return new Promise((resolve, reject) => {

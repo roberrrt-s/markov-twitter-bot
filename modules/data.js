@@ -49,13 +49,18 @@ function scrapeTweetsFromTwitter() {
 	return new Promise((resolve, reject) => {
 		twitter.scrapeUserTweets(process.env.TWITTER_USERS.split(' '))
 			.then(data => {
-				resolve(
-					data.flatMap(user => {
-						return user.map(tweet => {
-							return tweet.full_text;
-						});
-					})
-				);
+
+				let tweets = data.flat();
+
+				util.shuffleArray(tweets);
+
+				let sortedData = {
+					replies: tweets.filter(util.filterTweets, 1).map(util.convertTweetObjToMarkovReady),
+					// retweets: tweets.filter(util.filterTweets, ['Reply']).map(util.convertTweetObjToMarkovReady),
+					tweets: tweets.filter(util.filterTweets, 0).map(util.convertTweetObjToMarkovReady)
+				};
+
+				resolve(sortedData);
 			})
 			.catch(err => {
 				reject(err);
