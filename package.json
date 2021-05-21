@@ -1,0 +1,37 @@
+{
+  "name": "markov-twitter-bot",
+  "version": "1.0.0",
+  "description": "Combine Twitter with Markov",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=15.3.0",
+    "npm": ">=7.0.14"
+  },
+  "author": "Robert Spier",
+  "license": "ISC",
+  "dependencies": {
+    "babel-preset-latest": "^6.16.0",
+    "babel-preset-stage-3": "^6.5.0",
+    "dotenv": "^9.0.2",
+    "fs-extra": "^10.0.0",
+    "lda": "^0.2.0",
+    "markov-strings": "^3.0.1",
+    "node-cron": "^3.0.0",
+    "nodemon": "^2.0.7",
+    "sentimental": "^0.1.2",
+    "twit": "^2.2.11"
+  },
+  "babel": {
+    "presets": [
+      "stage-3",
+      "latest"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "^7.26.0"
+  }
+}
